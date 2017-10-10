@@ -4,5 +4,6 @@
     - debug:
         msg: "Ansible Pull"
 
-- include: tasks/manage_users.yml
-- include: tasks/manage_sudoers.yml
+    - include: tasks/manage_users.yml
+
+    - include: tasks/manage_sudoers.yml
