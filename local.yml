@@ -1,9 +1,9 @@
 - hosts: localhost
   connection: local
-  vars:
+  vars_files:
     - defaults/main.yml
     - vars/main.yml
-    
+
   tasks:
     - debug:
         msg: "Ansible Pull"
