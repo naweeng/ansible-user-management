@@ -1,0 +1,13 @@
+
+- name: Backup sudoers file
+  sudo: true
+  command: cp -f /etc/sudoers /etc/suoders.bak
+  changed_when: false
+
+- name: Add admin group to sudoers
+  sudo: true
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^%{{admin_group}}"
+    line: "%{{admin_group}} ALL=(ALL) ALL"
+    validate: '/usr/bin/visudo -cf %s'

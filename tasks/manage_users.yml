@@ -1,0 +1,43 @@
+---
+
+- name: Create admin group
+  sudo: true
+  group:
+    name: "{{ admin_group }}"
+    state: present
+
+- name: Create Users
+  sudo: true
+  user:
+    name: "{{item.username}}"
+    state: "{{item.state}}"
+    shell: "/bin/{{item.shell | default('bash')}}"
+    group: "{{ admin_group }}"
+    remove: yes
+    password: "{{item.hashed_password}}"
+    home: "/home/{{item.username}}"
+  when: item.username is defined
+  with_items:
+    - "{{ user_list }}"
+
+- name: Setup authorized_keys for the user
+  sudo: true
+  authorized_key:
+    user: "{{item.0.username}}"
+    key: "{{item.1}}"
+  when: item.0.state == "present"
+  with_subelements:
+    - "{{ user_list }}"
+    - pubkeys
+
+- name: Cleanup pub key from authorized_keys
+  sudo: true
+  authorized_key:
+    user: "{{item.0.username}}"
+    key: "{{item.1}}"
+    state: absent
+  when: item.0.state == "absent"
+  with_subelements:
+    - "{{ user_list }}"
+    - pubkeys
+  ignore_errors: yes
